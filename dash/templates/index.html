@@ -41,8 +41,13 @@
         labels: data.map(row => new Date(row.instant).toLocaleTimeString()),
         datasets: [
           {
-            label: 'Temperatura x Hora',
-            data: data.map(row => row.temperature),
+            label: 'Temperatura(Com filtro) x Hora',
+            data: data.filter(row => row.type == 0).map(row => row.temperature),
+            tension: 0.1
+          },
+          {
+            label: 'Temperatura(Sem filtro) x Hora',
+            data: data.filter(row => row.type == 1).map(row => row.temperature),
             tension: 0.1
           }
         ]

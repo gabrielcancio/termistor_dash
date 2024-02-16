@@ -12,4 +12,4 @@ def get_data(request):
   return JsonResponse(measurements, safe=False)
 
 def get_measurements():
-  return list(Measurement.objects.all().values('temperature', 'id', 'instant'))
+  return list(Measurement.objects.all().values('temperature', 'id', 'instant', 'type'))
