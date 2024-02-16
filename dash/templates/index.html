@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="container" style="display: flex; flex: 1; align-items: center; justify-content: center; padding: 20px;">
+    <div id="content" >
+      <h1 style="margin-bottom: 20px;">Sistema de medição de temperatura utilizando termistor NTC</h1>
+      <div style="width: 800px;"><canvas id="line-chart"></canvas></div>
+    </div>
+  </div>
+</body>
+{{measurements|json_script:"measurements_json"}}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+  console.log("INCIOU");
+  const data = JSON.parse(document.getElementById('measurements_json').textContent)
+  console.log(data);
+  console.log(Chart);
+  (async function() {
+
+  new Chart(
+    document.getElementById('line-chart'),
+    {
+      type: 'line',
+      data: {
+        labels: data.map(row => new Date(row.instant).toLocaleTimeString()),
+        datasets: [
+          {
+            label: 'Temperatura x Hora',
+            data: data.map(row => row.temperature),
+            tension: 0.1
+          }
+        ]
+      }
+    }
+  );
+})();
+</script>
+</html>
