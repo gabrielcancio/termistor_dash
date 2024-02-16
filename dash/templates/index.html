@@ -17,9 +17,9 @@
   </style>
 </head>
 <body>
-  <div id="container" style="display: flex; flex: 1; align-items: center; justify-content: center; padding: 20px;">
+  <div id="container" style="display: flex; flex: 1; align-items: center; justify-content: center; padding: 50px;">
     <div id="content" >
-      <h1 style="margin-bottom: 20px;">Sistema de medição de temperatura utilizando termistor NTC</h1>
+      <h1 style="margin-bottom: 20px; font-family: Helvetica;">Sistema de medição de temperatura utilizando termistor NTC</h1>
       <div style="width: 800px;"><canvas id="line-chart"></canvas></div>
     </div>
   </div>
@@ -33,7 +33,7 @@
   console.log(Chart);
   (async function() {
 
-  new Chart(
+  document.chart = new Chart(
     document.getElementById('line-chart'),
     {
       type: 'line',
@@ -43,17 +43,29 @@
           {
             label: 'Temperatura(Com filtro) x Hora',
             data: data.filter(row => row.type == 0).map(row => row.temperature),
-            tension: 0.1
+            tension: 0.1,
+            pointStyle: false,
           },
           {
             label: 'Temperatura(Sem filtro) x Hora',
             data: data.filter(row => row.type == 1).map(row => row.temperature),
-            tension: 0.1
+            tension: 0.1,
+            pointStyle: false,
           }
         ]
       }
     }
   );
+  window.onload = () => {
+    setInterval(async () => {
+      const response = await fetch('http://localhost:8000/dash/data/');
+      const result = await response.json();
+      document.chart.data.labels = result.map(row => new Date(row.instant).toLocaleTimeString());
+      document.chart.data.datasets[0].data = result.filter(row => row.type == 0).map(row => row.temperature);
+      document.chart.data.datasets[1].data = result.filter(row => row.type == 1).map(row => row.temperature);
+      document.chart.update('none');
+    }, 200);
+  }
 })();
 </script>
 </html>
